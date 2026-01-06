@@ -19,7 +19,7 @@ public class Ticket {
     private Instant creationDate;
 
     @Column(nullable = false)
-    private String applicationId;
+    private String initiatorApp;
 
     @Column(nullable = false)
     private Long userId;
