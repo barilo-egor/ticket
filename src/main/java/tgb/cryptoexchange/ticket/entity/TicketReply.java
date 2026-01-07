@@ -1,7 +1,10 @@
 package tgb.cryptoexchange.ticket.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -9,6 +12,9 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "reply")
 public class TicketReply {
 
@@ -16,7 +22,8 @@ public class TicketReply {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
     @Column

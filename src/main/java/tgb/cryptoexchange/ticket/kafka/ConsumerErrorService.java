@@ -6,10 +6,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class TicketConsumerErrorService {
+public class ConsumerErrorService {
 
     public void handle(ConsumerRecord<?, ?> consumerRecord, Exception e) {
-        log.error("Ошибка обработки записи: key={}, value={}", consumerRecord.key(), consumerRecord.value(), e);
+        log.error("Ошибка обработки записи: key={}, value={} partition={} offset={} ",
+                consumerRecord.key(), consumerRecord.value(), consumerRecord.partition(), consumerRecord.offset(), e);
     }
 
 }

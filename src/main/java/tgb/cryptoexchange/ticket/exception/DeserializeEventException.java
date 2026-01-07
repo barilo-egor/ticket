@@ -1,4 +1,4 @@
-package tgb.cryptoexchange.exception;
+package tgb.cryptoexchange.ticket.exception;
 
 /**
  * Пробрасывается в случае ошибки при преобразовании в java объект.
