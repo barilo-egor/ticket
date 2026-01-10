@@ -17,8 +17,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.backoff.FixedBackOff;
 import tgb.cryptoexchange.ticket.kafka.ConsumerErrorService;
-import tgb.cryptoexchange.ticket.kafka.TicketReplyRequest;
-import tgb.cryptoexchange.ticket.kafka.TicketRequest;
+import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
+import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,28 +36,28 @@ public class CommonConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, TicketRequest> consumerTicketFactory(KafkaProperties kafkaProperties) {
+    public ConsumerFactory<String, TicketReceive> consumerTicketFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties();
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, TicketRequest.KafkaDeserializer.class);
+        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, TicketReceive.KafkaDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean
-    public ConsumerFactory<String, TicketReplyRequest> consumerTicketReplyFactory(KafkaProperties kafkaProperties) {
+    public ConsumerFactory<String, TicketReplyReceive> consumerTicketReplyFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties();
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
-        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, TicketReplyRequest.KafkaDeserializer.class);
+        props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, TicketReplyReceive.KafkaDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, TicketRequest> ticketListenerFactory(
+    public ConcurrentKafkaListenerContainerFactory<String, TicketReceive> ticketListenerFactory(
             KafkaProperties kafkaProperties,
             ConsumerErrorService ticketConsumerErrorService) {
-        ConcurrentKafkaListenerContainerFactory<String, TicketRequest> factory =
+        ConcurrentKafkaListenerContainerFactory<String, TicketReceive> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerTicketFactory(kafkaProperties));
         factory.setCommonErrorHandler(defaultErrorHandler(ticketConsumerErrorService));
@@ -65,10 +65,10 @@ public class CommonConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, TicketReplyRequest> ticketReplyListenerFactory(
+    public ConcurrentKafkaListenerContainerFactory<String, TicketReplyReceive> ticketReplyListenerFactory(
             KafkaProperties kafkaProperties,
             ConsumerErrorService ticketConsumerErrorService) {
-        ConcurrentKafkaListenerContainerFactory<String, TicketReplyRequest> factory =
+        ConcurrentKafkaListenerContainerFactory<String, TicketReplyReceive> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerTicketReplyFactory(kafkaProperties));
         factory.setCommonErrorHandler(defaultErrorHandler(ticketConsumerErrorService));

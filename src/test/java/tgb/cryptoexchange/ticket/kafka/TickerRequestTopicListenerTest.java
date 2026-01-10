@@ -19,7 +19,7 @@ class TickerRequestTopicListenerTest {
 
     @Test
     void receiveShouldCallServiceMethodWithAllMerchants() {
-        TicketRequest detailsRequest = new TicketRequest();
+        TicketReceive detailsRequest = new TicketReceive();
         detailsRequest.setDescription("HELP ME");
         ticketRequestTopicListener.receive(detailsRequest);
         verify(ticketRequestProcessorService).process(detailsRequest);

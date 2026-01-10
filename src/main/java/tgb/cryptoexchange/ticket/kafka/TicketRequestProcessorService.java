@@ -20,7 +20,7 @@ public class TicketRequestProcessorService {
 
     }
 
-    public void process(TicketRequest ticketRequest) {
+    public void process(TicketReceive ticketRequest) {
         ticketRequestSaveExecutor.submit(() -> {
             try {
                 ticketService.save(ticketRequest);

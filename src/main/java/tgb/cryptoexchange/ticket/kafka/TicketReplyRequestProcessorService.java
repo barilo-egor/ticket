@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import tgb.cryptoexchange.ticket.service.TicketReplyService;
-import tgb.cryptoexchange.ticket.service.TicketService;
 
 @Service
 @Slf4j
@@ -21,7 +20,7 @@ public class TicketReplyRequestProcessorService {
 
     }
 
-    public void process(TicketReplyRequest ticketReplyRequest) {
+    public void process(TicketReplyReceive ticketReplyRequest) {
         ticketRequestSaveExecutor.submit(() -> {
             try {
                 ticketReplyService.save(ticketReplyRequest);

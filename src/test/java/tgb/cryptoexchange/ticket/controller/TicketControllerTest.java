@@ -38,9 +38,9 @@ class TicketControllerTest {
         ticket.setId(1L);
         Page<TicketDTO> page = new PageImpl<>(Collections.singletonList(ticket));
 
-        when(ticketService.findAllFilteredAndPaged(any(), any(), any(), any())).thenReturn(page);
+        when(ticketService.findAll(any(), any())).thenReturn(page);
 
-        mockMvc.perform(get("/api/tickets")
+        mockMvc.perform(get("/ticket")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(1L));
@@ -49,9 +49,9 @@ class TicketControllerTest {
     @Test
     @DisplayName("findAll должен вернуть 204 No Content, если список пуст")
     void findAll_ShouldReturnNoContent_WhenEmpty() throws Exception {
-        when(ticketService.findAllFilteredAndPaged(any(), any(), any(), any())).thenReturn(Page.empty());
+        when(ticketService.findAll(any(), any())).thenReturn(Page.empty());
 
-        mockMvc.perform(get("/api/tickets"))
+        mockMvc.perform(get("/ticket"))
                 .andExpect(status().isNoContent());
     }
 
@@ -60,14 +60,14 @@ class TicketControllerTest {
     void findById_ShouldReturnNotFound() throws Exception {
         when(ticketService.findById(1L)).thenReturn(null);
 
-        mockMvc.perform(get("/api/tickets/1"))
+        mockMvc.perform(get("/ticket/1"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("deleteById должен вызвать сервис и вернуть 200 OK")
     void deleteById_ShouldReturnOk() throws Exception {
-        mockMvc.perform(delete("/api/tickets/100"))
+        mockMvc.perform(delete("/ticket/100"))
                 .andExpect(status().isOk());
 
         verify(ticketService).deleteById(100L);

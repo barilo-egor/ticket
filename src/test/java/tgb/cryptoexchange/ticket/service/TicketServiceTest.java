@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.entity.Ticket;
-import tgb.cryptoexchange.ticket.kafka.TicketRequest;
+import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
 
 import java.util.Optional;
@@ -29,7 +29,7 @@ class TicketServiceTest {
     @Test
     @DisplayName("save должен корректно мапить запрос и сохранять тикет")
     void save_ShouldMapAndSave() {
-        TicketRequest request = new TicketRequest();
+        TicketReceive request = new TicketReceive();
         request.setUserId(123L);
         request.setCategory("SUPPORT");
         request.setDescription("Help me");

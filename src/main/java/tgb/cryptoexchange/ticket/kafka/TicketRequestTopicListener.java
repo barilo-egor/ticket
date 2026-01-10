@@ -15,7 +15,7 @@ public class TicketRequestTopicListener {
 
     @KafkaListener(topics = "${kafka.topic.ticket.request}", groupId = "${kafka.group-id}",
             containerFactory = "ticketListenerFactory")
-    public void receive(@Payload TicketRequest ticketRequest) {
+    public void receive(@Payload TicketReceive ticketRequest) {
         requestProcessorService.process(ticketRequest);
     }
 

@@ -39,7 +39,7 @@ public class TicketRequestProcessorServiceTest {
     @Test
     @DisplayName("process должен асинхронно сохранить тикет")
     void process_ShouldSaveAsynchronously() {
-        TicketRequest request = new TicketRequest();
+        TicketReceive request = new TicketReceive();
 
         processorService.process(request);
 

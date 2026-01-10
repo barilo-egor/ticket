@@ -3,12 +3,16 @@ package tgb.cryptoexchange.ticket.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
+import tgb.cryptoexchange.ticket.dto.TicketRequest;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
 
@@ -42,7 +46,11 @@ class TicketServiceIntegrationTest {
     @Test
     @DisplayName("Фильтрация по appId должна возвращать только подходящие записи")
     void findAll_FilterByAppId() {
-        Page<TicketDTO> result = ticketService.findAllFilteredAndPaged("TG", null, null, PageRequest.of(0, 10));
+        TicketRequest ticketRequest = new TicketRequest();
+        ticketRequest.setAppId("TG");
+        ticketRequest.setUserId(null);
+        ticketRequest.setCategory(null);
+        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(ticketRequest.getPageNumber(), ticketRequest.getPageSize()), ticketRequest);
 
         assertThat(result.getTotalElements()).isEqualTo(2);
         assertThat(result.getContent()).allMatch(t -> t.getAppId().equals("TG"));
@@ -51,7 +59,11 @@ class TicketServiceIntegrationTest {
     @Test
     @DisplayName("Фильтрация по appId и category одновременно")
     void findAll_FilterByMultipleParams() {
-        Page<TicketDTO> result = ticketService.findAllFilteredAndPaged("TG", null, "B", PageRequest.of(0, 10));
+        TicketRequest ticketRequest = new TicketRequest();
+        ticketRequest.setAppId("TG");
+        ticketRequest.setUserId(null);
+        ticketRequest.setCategory("B");
+        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(ticketRequest.getPageNumber(), ticketRequest.getPageSize()), ticketRequest);
 
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getContent().getFirst().getUserId()).isEqualTo(3L);
@@ -60,7 +72,11 @@ class TicketServiceIntegrationTest {
     @Test
     @DisplayName("Если параметры пусты, возвращаются все записи")
     void findAll_NoFilters() {
-        Page<TicketDTO> result = ticketService.findAllFilteredAndPaged(null, null, null, PageRequest.of(0, 10));
+        TicketRequest ticketRequest = new TicketRequest();
+        ticketRequest.setAppId(null);
+        ticketRequest.setUserId(null);
+        ticketRequest.setCategory(null);
+        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(ticketRequest.getPageNumber(), ticketRequest.getPageSize()), ticketRequest);
 
         assertThat(result.getTotalElements()).isEqualTo(3);
     }

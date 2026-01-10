@@ -10,12 +10,11 @@ import org.apache.kafka.common.serialization.Deserializer;
 import tgb.cryptoexchange.ticket.exception.DeserializeEventException;
 
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TicketReplyRequest {
+public class TicketReplyReceive {
 
     @NotNull(message = "ticketId must not be null")
     @JsonProperty(required = true)
@@ -29,16 +28,16 @@ public class TicketReplyRequest {
 
     private List<String> fileIds;
 
-    public static class KafkaDeserializer implements Deserializer<TicketReplyRequest> {
+    public static class KafkaDeserializer implements Deserializer<TicketReplyReceive> {
 
         private final ObjectMapper objectMapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule());
 
         @Override
-        public TicketReplyRequest deserialize(String topic, byte[] data) {
+        public TicketReplyReceive deserialize(String topic, byte[] data) {
             try {
                 if (data == null) return null;
-                return objectMapper.readValue(data, TicketReplyRequest.class);
+                return objectMapper.readValue(data, TicketReplyReceive.class);
             } catch (Exception e) {
                 throw new DeserializeEventException("Error occurred while deserializer value: " + new String(data, StandardCharsets.UTF_8), e);
             }

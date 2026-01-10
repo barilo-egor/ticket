@@ -6,7 +6,7 @@ import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.TicketReply;
 import tgb.cryptoexchange.ticket.exception.TicketReplyException;
-import tgb.cryptoexchange.ticket.kafka.TicketReplyRequest;
+import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
 
 
@@ -23,7 +23,7 @@ public class TicketReplyService {
         this.ticketService = ticketService;
     }
 
-    public void save(TicketReplyRequest ticketReplyRequest) {
+    public void save(TicketReplyReceive ticketReplyRequest) {
         log.info("Запрос на сохранение ответа на тикет: {}", ticketReplyRequest.getTicketId());
         TicketDTO ticketDTO = ticketService.findById(ticketReplyRequest.getTicketId());
         if (ticketDTO == null) {
