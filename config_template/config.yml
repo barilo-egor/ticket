@@ -1,4 +1,11 @@
+springdoc:
+  swagger-ui:
+    enabled: "true"
+    path: "/swagger"
+  api-docs:
+    path: "/swagger/api-docs"
 spring:
+  port:
   datasource:
     username:
     password:
