@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -17,18 +18,17 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.backoff.FixedBackOff;
 import tgb.cryptoexchange.ticket.kafka.ConsumerErrorService;
-import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.kafka.TicketReceive;
+import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 
 @Configuration
 @EnableAsync
 public class CommonConfig {
 
     @Bean
+    @Profile({"!kafka-disabled"})
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -36,6 +36,7 @@ public class CommonConfig {
     }
 
     @Bean
+    @Profile({"!kafka-disabled"})
     public ConsumerFactory<String, TicketReceive> consumerTicketFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties();
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -45,6 +46,7 @@ public class CommonConfig {
     }
 
     @Bean
+    @Profile({"!kafka-disabled"})
     public ConsumerFactory<String, TicketReplyReceive> consumerTicketReplyFactory(KafkaProperties kafkaProperties) {
         Map<String, Object> props = kafkaProperties.buildConsumerProperties();
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -54,6 +56,7 @@ public class CommonConfig {
     }
 
     @Bean
+    @Profile({"!kafka-disabled"})
     public ConcurrentKafkaListenerContainerFactory<String, TicketReceive> ticketListenerFactory(
             KafkaProperties kafkaProperties,
             ConsumerErrorService ticketConsumerErrorService) {
@@ -65,6 +68,7 @@ public class CommonConfig {
     }
 
     @Bean
+    @Profile({"!kafka-disabled"})
     public ConcurrentKafkaListenerContainerFactory<String, TicketReplyReceive> ticketReplyListenerFactory(
             KafkaProperties kafkaProperties,
             ConsumerErrorService ticketConsumerErrorService) {
@@ -95,11 +99,6 @@ public class CommonConfig {
         executor.setThreadNamePrefix("TicketRequestSave-");
         executor.initialize();
         return executor;
-    }
-
-    @Bean
-    public Map<Long, Future<Void>> activeSearchMap() {
-        return new ConcurrentHashMap<>();
     }
 
 }
