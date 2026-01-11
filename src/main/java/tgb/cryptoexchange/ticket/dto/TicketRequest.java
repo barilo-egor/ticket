@@ -23,13 +23,6 @@ public class TicketRequest {
 
     private String category;
 
-    @Min(0)
-    private Integer pageNumber = 0;
-
-    @Max(100)
-    @Min(1)
-    private Integer pageSize = 20;
-
     public List<Predicate> toPredicates(Root<Ticket> root, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
         if (StringUtils.isNotBlank(appId)) {

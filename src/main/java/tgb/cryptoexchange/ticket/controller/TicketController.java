@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,8 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TicketDTO>> findAll(@Valid @ModelAttribute TicketRequest ticketRequest) {
-        Page<TicketDTO> tickets = ticketService.findAll(PageRequest.of(ticketRequest.getPageNumber(), ticketRequest.getPageSize()), ticketRequest);
+    public ResponseEntity<Page<TicketDTO>> findAll(@Valid @ModelAttribute TicketRequest ticketRequest, @PageableDefault(size = 20) Pageable pageable) {
+        Page<TicketDTO> tickets = ticketService.findAll(pageable, ticketRequest);
         if (tickets.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
