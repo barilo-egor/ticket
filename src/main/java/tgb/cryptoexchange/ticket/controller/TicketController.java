@@ -27,9 +27,6 @@ public class TicketController {
     @GetMapping
     public ResponseEntity<Page<TicketDTO>> findAll(@Valid @ModelAttribute TicketRequest ticketRequest, @PageableDefault(size = 20) Pageable pageable) {
         Page<TicketDTO> tickets = ticketService.findAll(pageable, ticketRequest);
-        if (tickets.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
         return ResponseEntity.ok(tickets);
     }
 

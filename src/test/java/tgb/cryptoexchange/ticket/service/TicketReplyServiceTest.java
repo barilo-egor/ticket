@@ -15,6 +15,7 @@ import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -44,17 +45,15 @@ class TicketReplyServiceTest {
     }
 
     @Test
-    @DisplayName("Выброс исключения, если тикет не найден")
+    @DisplayName("Если тикет не найден - сохранение не происходит")
     void save_TicketNotFound_ThrowsException() {
         Long ticketId = 200L;
         TicketReplyReceive request = createRequest(ticketId);
 
         when(ticketService.findById(ticketId)).thenReturn(null);
 
-        assertThatThrownBy(() -> ticketReplyService.save(request))
-                .isInstanceOf(TicketReplyException.class)
-                .hasMessageContaining("Тикет с ID 200 не существует");
-
+        assertThatCode(() -> ticketReplyService.save(request))
+                .doesNotThrowAnyException();
         verify(tickerReplyRepository, never()).save(any());
     }
 

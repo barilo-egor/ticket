@@ -50,7 +50,10 @@ class TicketServiceIntegrationTest {
         ticketRequest.setAppId("TG");
         ticketRequest.setUserId(null);
         ticketRequest.setCategory(null);
-        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(ticketRequest.getPageNumber(), ticketRequest.getPageSize()), ticketRequest);
+        int page = 0;
+        int size = 10;
+
+        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(page, size), ticketRequest);
 
         assertThat(result.getTotalElements()).isEqualTo(2);
         assertThat(result.getContent()).allMatch(t -> t.getAppId().equals("TG"));
@@ -63,7 +66,10 @@ class TicketServiceIntegrationTest {
         ticketRequest.setAppId("TG");
         ticketRequest.setUserId(null);
         ticketRequest.setCategory("B");
-        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(ticketRequest.getPageNumber(), ticketRequest.getPageSize()), ticketRequest);
+        int page = 0;
+        int size = 10;
+
+        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(page, size), ticketRequest);
 
         assertThat(result.getTotalElements()).isEqualTo(1);
         assertThat(result.getContent().getFirst().getUserId()).isEqualTo(3L);
@@ -76,7 +82,10 @@ class TicketServiceIntegrationTest {
         ticketRequest.setAppId(null);
         ticketRequest.setUserId(null);
         ticketRequest.setCategory(null);
-        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(ticketRequest.getPageNumber(), ticketRequest.getPageSize()), ticketRequest);
+        int page = 0;
+        int size = 10;
+
+        Page<TicketDTO> result = ticketService.findAll(PageRequest.of(page, size), ticketRequest);
 
         assertThat(result.getTotalElements()).isEqualTo(3);
     }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.TicketReply;
-import tgb.cryptoexchange.ticket.exception.TicketReplyException;
 import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
 
@@ -27,8 +26,8 @@ public class TicketReplyService {
         log.info("Запрос на сохранение ответа на тикет: {}", ticketReplyRequest.getTicketId());
         TicketDTO ticketDTO = ticketService.findById(ticketReplyRequest.getTicketId());
         if (ticketDTO == null) {
-            throw new TicketReplyException(
-                    String.format("Тикет с ID %s не существует", ticketReplyRequest.getTicketId()));
+            log.warn("Тикет с ID {} не существует", ticketReplyRequest.getTicketId());
+            return;
         }
 
         TicketReply ticketReply = TicketReply.builder()
