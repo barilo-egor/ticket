@@ -41,6 +41,7 @@ public class Ticket {
             joinColumns = @JoinColumn(name = "ticket_id")
     )
     @Column
+    @Builder.Default
     private List<String> fileIds = new ArrayList<>();
 
     @OneToOne(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)

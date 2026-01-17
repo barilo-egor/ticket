@@ -33,6 +33,7 @@ public class TicketDTO {
 
     private String description;
 
+    @Builder.Default
     private List<String> fileIds = new ArrayList<>();
 
     private Long replyTicketId;

@@ -12,6 +12,9 @@ import tgb.cryptoexchange.controller.ApiController;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.dto.TicketRequest;
 import tgb.cryptoexchange.ticket.service.TicketService;
+import tgb.cryptoexchange.web.ApiResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/ticket")
@@ -25,15 +28,20 @@ public class TicketController extends ApiController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TicketDTO>> findAll(@Valid @ModelAttribute TicketRequest ticketRequest, @PageableDefault(size = 20) Pageable pageable) {
+    public ResponseEntity<ApiResponse<List<TicketDTO>>> findAll(@Valid @ModelAttribute TicketRequest ticketRequest, @PageableDefault(size = 20) Pageable pageable) {
         Page<TicketDTO> tickets = ticketService.findAll(pageable, ticketRequest);
-        return ResponseEntity.ok(tickets);
+        return new ResponseEntity<>(ApiResponse.success(
+                tickets.getContent()),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TicketDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<TicketDTO>> findById(@PathVariable Long id) {
         return ticketService.findById(id)
-                .map(ticket -> ResponseEntity.ok(TicketDTO.fromEntity(ticket)))
+                .map(ticket -> new ResponseEntity<>(ApiResponse.success(
+                        TicketDTO.fromEntity(ticket)),
+                        HttpStatus.OK))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
