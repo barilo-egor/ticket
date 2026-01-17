@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import tgb.cryptoexchange.exception.BadRequestException;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.dto.TicketRequest;
 import tgb.cryptoexchange.ticket.entity.Ticket;
@@ -12,6 +13,7 @@ import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -51,34 +53,20 @@ public class TicketService {
     }
 
 
-    public TicketDTO findById(Long id) {
+    public Optional<Ticket> findById(Long id) {
         log.debug("Запрос на поиск тикета по ID: {}", id);
-        Ticket ticket = ticketRepository.findById(id).orElse(null);
-        if (ticket == null) {
-            log.warn("Тикет с ID: {} не найден", id);
-            return null;
-        }
-        return TicketDTO.builder()
-                .id(ticket.getId())
-                .category(ticket.getCategory())
-                .description(ticket.getDescription())
-                .creationDate(ticket.getCreationDate())
-                .userId(ticket.getUserId())
-                .fileIds(ticket.getFileIds())
-                .appId(ticket.getAppId())
-                .replyTicketId(ticket.getReplyTicket() == null ? null : ticket.getReplyTicket().getId())
-                .build();
+        return ticketRepository.findById(id);
     }
 
     public void deleteById(Long id) {
         log.info("Запрос на удаление тикета с ID: {}", id);
         if (ticketRepository.existsById(id)) {
             ticketRepository.deleteById(id);
-            log.info("Тикет с ID: {} удален", id);
+            log.info("Тикет с ID={} удален", id);
         } else {
-            log.warn("Тикет с ID: {} не существует", id);
+            log.warn("Тикет для удаления с ID={} не существует.", id);
+            throw new BadRequestException(String.format("Ticket with id %s not found.", id));
         }
-
     }
 
 }

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tgb.cryptoexchange.ticket.dto.TicketDTO;
+import tgb.cryptoexchange.exception.BadRequestException;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
@@ -14,6 +14,7 @@ import tgb.cryptoexchange.ticket.repository.TickerRepository;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatException;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -40,8 +41,8 @@ class TicketServiceTest {
     }
 
     @Test
-    @DisplayName("findById должен возвращать DTO при наличии тикета")
-    void findById_ShouldReturnDto_WhenFound() {
+    @DisplayName("findById должен возвращать тикет при наличии тикета")
+    void findById_ShouldReturnTicket_WhenFound() {
         Long id = 1L;
         Ticket ticket = Ticket.builder()
                 .id(id)
@@ -50,21 +51,22 @@ class TicketServiceTest {
                 .build();
         when(ticketRepository.findById(id)).thenReturn(Optional.of(ticket));
 
-        TicketDTO result = ticketService.findById(id);
+        Optional<Ticket> result = ticketService.findById(id);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(id);
-        assertThat(result.getUserId()).isEqualTo(123L);
+        assertThat(result).isPresent();
+        Ticket actual = result.get();
+        assertThat(actual.getId()).isEqualTo(id);
+        assertThat(actual.getUserId()).isEqualTo(123L);
     }
 
     @Test
-    @DisplayName("findById должен возвращать null, если тикет не найден")
-    void findById_ShouldReturnNull_WhenNotFound() {
+    @DisplayName("findById должен возвращать пустой Optional, если тикет не найден")
+    void findById_ShouldReturnEmptyOptional_WhenNotFound() {
         when(ticketRepository.findById(1L)).thenReturn(Optional.empty());
 
-        TicketDTO result = ticketService.findById(1L);
+        Optional<Ticket> result = ticketService.findById(1L);
 
-        assertThat(result).isNull();
+        assertThat(result).isEmpty();
     }
 
     @Test
@@ -79,12 +81,10 @@ class TicketServiceTest {
     }
 
     @Test
-    @DisplayName("deleteById не должен вызывать удаление, если тикета нет")
+    @DisplayName("deleteById должен пробросить исключение BadRequestException, если тикета нет")
     void deleteById_ShouldNotExecute_WhenNotExists() {
         when(ticketRepository.existsById(1L)).thenReturn(false);
 
-        ticketService.deleteById(1L);
-
-        verify(ticketRepository, never()).deleteById(anyLong());
+        assertThatException().isThrownBy(() -> ticketService.deleteById(1L)).isInstanceOf(BadRequestException.class);
     }
 }

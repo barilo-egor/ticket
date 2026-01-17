@@ -6,15 +6,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tgb.cryptoexchange.ticket.dto.TicketDTO;
+import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.TicketReply;
-import tgb.cryptoexchange.ticket.exception.TicketReplyException;
 import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,7 +36,7 @@ class TicketReplyServiceTest {
         Long ticketId = 100L;
         TicketReplyReceive request = createRequest(ticketId);
 
-        when(ticketService.findById(ticketId)).thenReturn(new TicketDTO());
+        when(ticketService.findById(ticketId)).thenReturn(Optional.of(new Ticket()));
         ticketReplyService.save(request);
 
         verify(tickerReplyRepository, times(1)).save(any(TicketReply.class));
@@ -50,7 +49,7 @@ class TicketReplyServiceTest {
         Long ticketId = 200L;
         TicketReplyReceive request = createRequest(ticketId);
 
-        when(ticketService.findById(ticketId)).thenReturn(null);
+        when(ticketService.findById(ticketId)).thenReturn(Optional.empty());
 
         assertThatCode(() -> ticketReplyService.save(request))
                 .doesNotThrowAnyException();

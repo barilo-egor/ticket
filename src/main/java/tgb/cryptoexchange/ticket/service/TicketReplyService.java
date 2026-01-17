@@ -2,11 +2,12 @@ package tgb.cryptoexchange.ticket.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.TicketReply;
 import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
+
+import java.util.Optional;
 
 
 @Service
@@ -24,12 +25,11 @@ public class TicketReplyService {
 
     public void save(TicketReplyReceive ticketReplyRequest) {
         log.info("Запрос на сохранение ответа на тикет: {}", ticketReplyRequest.getTicketId());
-        TicketDTO ticketDTO = ticketService.findById(ticketReplyRequest.getTicketId());
-        if (ticketDTO == null) {
-            log.warn("Тикет с ID {} не существует", ticketReplyRequest.getTicketId());
+        Optional<Ticket> maybeTicket = ticketService.findById(ticketReplyRequest.getTicketId());
+        if (maybeTicket.isEmpty()) {
+            log.warn("На сохранение поступил тикет с ID {}, которого не существует: {}", ticketReplyRequest.getTicketId(), ticketReplyRequest);
             return;
         }
-
         TicketReply ticketReply = TicketReply.builder()
                 .ticket(Ticket.builder().id(ticketReplyRequest.getTicketId()).build())
                 .reply(ticketReplyRequest.getReply())

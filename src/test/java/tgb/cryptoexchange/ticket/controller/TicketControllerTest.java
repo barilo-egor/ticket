@@ -13,6 +13,7 @@ import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.service.TicketService;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -59,7 +60,7 @@ class TicketControllerTest {
     @Test
     @DisplayName("findById должен вернуть 404, если тикет не найден")
     void findById_ShouldReturnNotFound() throws Exception {
-        when(ticketService.findById(1L)).thenReturn(null);
+        when(ticketService.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/ticket/1"))
                 .andExpect(status().isNotFound());
