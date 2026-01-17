@@ -30,10 +30,9 @@ public class TicketController extends ApiController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<TicketDTO>>> findAll(@Valid @ModelAttribute TicketRequest ticketRequest, @PageableDefault(size = 20) Pageable pageable) {
         Page<TicketDTO> tickets = ticketService.findAll(pageable, ticketRequest);
-        return new ResponseEntity<>(ApiResponse.success(
-                tickets.getContent()),
-                HttpStatus.OK
-        );
+        return ResponseEntity.ok()
+                .header("X-Total-Count", String.valueOf(tickets.getTotalElements()))
+                .body(ApiResponse.success(tickets.getContent()));
     }
 
     @GetMapping("/{id}")
