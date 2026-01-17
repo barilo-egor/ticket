@@ -44,7 +44,7 @@ class TicketControllerTest {
         mockMvc.perform(get("/ticket")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(1L));
+                .andExpect(jsonPath("$.data[0].id").value(1L));
     }
 
     @Test
@@ -52,9 +52,11 @@ class TicketControllerTest {
     void findAll_ShouldReturnNoContent_WhenEmpty() throws Exception {
         when(ticketService.findAll(any(), any())).thenReturn(Page.empty());
 
-        mockMvc.perform(get("/ticket"))
+        mockMvc.perform(get("/ticket")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isEmpty());
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 
     @Test
