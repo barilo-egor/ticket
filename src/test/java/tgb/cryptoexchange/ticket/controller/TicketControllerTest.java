@@ -60,11 +60,11 @@ class TicketControllerTest {
     }
 
     @Test
-    @DisplayName("findById должен вернуть 404, если тикет не найден")
+    @DisplayName("findTicketReplyByTicketId должен вернуть 404, если тикет не найден")
     void findById_ShouldReturnNotFound() throws Exception {
         when(ticketService.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/ticket/1"))
+        mockMvc.perform(get("/ticket/1/reply"))
                 .andExpect(status().isNotFound());
     }
 
