@@ -34,7 +34,7 @@ public class TicketDTO {
     private String description;
 
     @Builder.Default
-    private List<String> fileIds = new ArrayList<>();
+    private List<FileDTO> files = new ArrayList<>();
 
     private Long replyTicketId;
 
@@ -45,7 +45,10 @@ public class TicketDTO {
                 .description(ticket.getDescription())
                 .creationDate(ticket.getCreationDate())
                 .userId(ticket.getUserId())
-                .fileIds(ticket.getFileIds())
+                .files(ticket.getFiles().stream()
+                        .map(file ->
+                                new FileDTO(file.getFileId(), file.getFormat()))
+                        .toList())
                 .appId(ticket.getAppId())
                 .replyTicketId(ticket.getReplyTicket() == null ? null : ticket.getReplyTicket().getId())
                 .build();
