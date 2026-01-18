@@ -36,8 +36,7 @@ public class TicketReply {
             name = "reply_files",
             joinColumns = @JoinColumn(name = "reply_id")
     )
-    @Column
     @Builder.Default
-    private List<String> fileIds = new ArrayList<>();
+    private List<File> files = new ArrayList<>();
 
 }

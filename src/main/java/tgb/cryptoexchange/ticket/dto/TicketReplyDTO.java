@@ -26,7 +26,7 @@ public class TicketReplyDTO {
     private Long authorId;
 
     @Builder.Default
-    private List<String> fileIds = new ArrayList<>();
+    private List<FileDTO> files = new ArrayList<>();
 
     public static TicketReplyDTO fromEntity(TicketReply ticketReply) {
         return TicketReplyDTO.builder()
@@ -34,6 +34,10 @@ public class TicketReplyDTO {
                 .reply(ticketReply.getReply())
                 .authorId(ticketReply.getAuthorId())
                 .ticketId(ticketReply.getTicket() == null ? null : ticketReply.getTicket().getId())
+                .files(ticketReply.getFiles().stream()
+                        .map(file ->
+                                new FileDTO(file.getFileId(), file.getFormat()))
+                        .toList())
                 .build();
     }
 

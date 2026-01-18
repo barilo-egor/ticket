@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Data;
 import org.apache.kafka.common.serialization.Deserializer;
+import tgb.cryptoexchange.ticket.dto.FileDTO;
 import tgb.cryptoexchange.ticket.exception.DeserializeEventException;
 
 import java.nio.charset.StandardCharsets;
@@ -22,7 +23,7 @@ public class TicketReceive {
 
     private String description;
 
-    private List<String> fileIds;
+    private List<FileDTO> files;
 
     public static class KafkaDeserializer implements Deserializer<TicketReceive> {
 

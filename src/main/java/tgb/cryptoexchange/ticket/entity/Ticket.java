@@ -40,9 +40,8 @@ public class Ticket {
             name = "ticket_files",
             joinColumns = @JoinColumn(name = "ticket_id")
     )
-    @Column
     @Builder.Default
-    private List<String> fileIds = new ArrayList<>();
+    private List<File> files = new ArrayList<>();
 
     @OneToOne(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
     private TicketReply replyTicket;

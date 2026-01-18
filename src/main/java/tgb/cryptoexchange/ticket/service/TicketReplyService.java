@@ -2,12 +2,16 @@ package tgb.cryptoexchange.ticket.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import tgb.cryptoexchange.ticket.entity.Ticket;
+import tgb.cryptoexchange.ticket.entity.File;
 import tgb.cryptoexchange.ticket.entity.TicketReply;
 import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -34,7 +38,10 @@ public class TicketReplyService {
                 .ticket(Ticket.builder().id(ticketReplyRequest.getTicketId()).build())
                 .reply(ticketReplyRequest.getReply())
                 .authorId(ticketReplyRequest.getAuthorId())
-                .fileIds(ticketReplyRequest.getFileIds())
+                .files(CollectionUtils.isEmpty(ticketReplyRequest.getFiles()) ? new ArrayList<>() :
+                        ticketReplyRequest.getFiles().stream()
+                                .map(dto -> new File(dto.getFileId(), dto.getFormat()))
+                                .toList())
                 .build();
         tickerReplyRepository.save(ticketReply);
         log.info("Ответ на тикет сохранен с ID: {}", ticketReply.getId());

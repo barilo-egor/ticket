@@ -6,12 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tgb.cryptoexchange.ticket.entity.File;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.TicketReply;
 import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
@@ -61,7 +62,7 @@ class TicketReplyServiceTest {
         request.setTicketId(ticketId);
         request.setReply("Test reply");
         request.setAuthorId(1L);
-        request.setFileIds(List.of("file1"));
+        request.setFiles(Collections.singletonList(new File("file1", "txt")));
         return request;
     }
 }

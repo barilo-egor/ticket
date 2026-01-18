@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest(classes = TicketReplyRequestProcessorService.class)
 @Import(TicketReplyRequestProcessorServiceTest.Config.class)
-public class TicketReplyRequestProcessorServiceTest {
+class TicketReplyRequestProcessorServiceTest {
 
     @Autowired
     private TicketReplyRequestProcessorService processorService;

@@ -5,15 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import tgb.cryptoexchange.exception.BadRequestException;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.dto.TicketRequest;
 import tgb.cryptoexchange.ticket.entity.Ticket;
+import tgb.cryptoexchange.ticket.entity.File;
 import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,7 +37,10 @@ public class TicketService {
                 .description(ticketReceive.getDescription())
                 .appId(ticketReceive.getAppId())
                 .userId(ticketReceive.getUserId())
-                .fileIds(ticketReceive.getFileIds())
+                .files(CollectionUtils.isEmpty(ticketReceive.getFiles()) ? new ArrayList<>() :
+                        ticketReceive.getFiles().stream()
+                                .map(dto -> new File(dto.getFileId(), dto.getFormat()))
+                                .toList())
                 .build();
         ticketRepository.save(ticket);
         log.info("Тикет сохранен с ID: {}", ticket.getId());
