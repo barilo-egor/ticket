@@ -10,11 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tgb.cryptoexchange.controller.ApiController;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
+import tgb.cryptoexchange.ticket.dto.TicketReplyDTO;
 import tgb.cryptoexchange.ticket.dto.TicketRequest;
 import tgb.cryptoexchange.ticket.service.TicketService;
 import tgb.cryptoexchange.web.ApiResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/ticket")
@@ -35,12 +37,12 @@ public class TicketController extends ApiController {
                 .body(ApiResponse.success(tickets.getContent()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<TicketDTO>> findById(@PathVariable Long id) {
+    @GetMapping("/{id}/reply")
+    public ResponseEntity<ApiResponse<TicketReplyDTO>> findTicketReplyByTicketId(@PathVariable Long id) {
         return ticketService.findById(id)
-                .map(ticket -> new ResponseEntity<>(ApiResponse.success(
-                        TicketDTO.fromEntity(ticket)),
-                        HttpStatus.OK))
+                .flatMap(ticket -> Optional.ofNullable(ticket.getReplyTicket()))
+                .map(reply ->
+                        new ResponseEntity<>(ApiResponse.success(TicketReplyDTO.fromEntity(reply)), HttpStatus.OK))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
