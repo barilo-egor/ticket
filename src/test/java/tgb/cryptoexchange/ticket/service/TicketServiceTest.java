@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tgb.cryptoexchange.exception.BadRequestException;
+import tgb.cryptoexchange.exception.UnprocessableEntityException;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
@@ -89,8 +89,8 @@ class TicketServiceTest {
 
         assertThatException()
                 .isThrownBy(() -> ticketService.deleteById(id))
-                .isInstanceOf(BadRequestException.class)
-                .withMessageContaining("Ticket with id 1 not found.");
+                .isInstanceOf(UnprocessableEntityException.class)
+                .withMessageContaining("Ticket has already been processed");
 
         verify(ticketRepository, never()).deleteById(anyLong());
     }
