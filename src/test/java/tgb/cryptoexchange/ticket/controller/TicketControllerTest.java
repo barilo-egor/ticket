@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
+import tgb.cryptoexchange.ticket.entity.Ticket;
+import tgb.cryptoexchange.ticket.entity.TicketReply;
 import tgb.cryptoexchange.ticket.service.TicketService;
 
 import java.util.Collections;
@@ -60,13 +62,37 @@ class TicketControllerTest {
     }
 
     @Test
-    @DisplayName("findTicketReplyByTicketId должен вернуть 404, если тикет не найден")
+    @DisplayName("findById должен вернуть 404, если тикет не найден")
     void findById_ShouldReturnNotFound() throws Exception {
         when(ticketService.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/ticket/1/reply"))
+        mockMvc.perform(get("/ticket/1"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("findTicketReplyByTicketId должен вернуть 200 OK и TicketReplyDTO, если тикет и ответ существуют")
+    void findTicketReplyByTicketId_ShouldReturnReply() throws Exception {
+        Long ticketId = 1L;
+        Ticket ticket = new Ticket();
+        ticket.setId(ticketId);
+
+        TicketReply reply = new TicketReply();
+        reply.setId(100L);
+        reply.setTicket(ticket);
+
+        ticket.setReplyTicket(reply);
+
+        when(ticketService.findById(ticketId)).thenReturn(Optional.of(ticket));
+
+        // 3. Выполнение запроса
+        mockMvc.perform(get("/ticket/{id}/reply", ticketId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.id").value(100))
+                .andExpect(jsonPath("$.success").value(true));
+    }
+
 
     @Test
     @DisplayName("deleteById должен вызвать сервис и вернуть 200 OK")

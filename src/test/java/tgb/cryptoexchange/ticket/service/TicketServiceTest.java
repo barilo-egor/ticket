@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tgb.cryptoexchange.exception.BadRequestException;
+import tgb.cryptoexchange.exception.UnprocessableEntityException;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
@@ -73,7 +73,8 @@ class TicketServiceTest {
     @DisplayName("deleteById должен вызывать репозиторий, если тикет существует")
     void deleteById_ShouldExecute_WhenExists() {
         Long id = 1L;
-        when(ticketRepository.existsById(id)).thenReturn(true);
+        Ticket ticket = new Ticket();
+        when(ticketRepository.findById(id)).thenReturn(Optional.of(ticket));
 
         ticketService.deleteById(id);
 
@@ -82,9 +83,15 @@ class TicketServiceTest {
 
     @Test
     @DisplayName("deleteById должен пробросить исключение BadRequestException, если тикета нет")
-    void deleteById_ShouldNotExecute_WhenNotExists() {
-        when(ticketRepository.existsById(1L)).thenReturn(false);
+    void deleteById_ShouldThrowBadRequest_WhenTicketNotFound() {
+        Long id = 1L;
+        when(ticketRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThatException().isThrownBy(() -> ticketService.deleteById(1L)).isInstanceOf(BadRequestException.class);
+        assertThatException()
+                .isThrownBy(() -> ticketService.deleteById(id))
+                .isInstanceOf(UnprocessableEntityException.class)
+                .withMessageContaining("Ticket has already been processed");
+
+        verify(ticketRepository, never()).deleteById(anyLong());
     }
 }
