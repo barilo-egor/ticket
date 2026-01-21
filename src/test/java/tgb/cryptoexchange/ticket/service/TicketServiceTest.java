@@ -73,7 +73,8 @@ class TicketServiceTest {
     @DisplayName("deleteById должен вызывать репозиторий, если тикет существует")
     void deleteById_ShouldExecute_WhenExists() {
         Long id = 1L;
-        when(ticketRepository.existsById(id)).thenReturn(true);
+        Ticket ticket = new Ticket();
+        when(ticketRepository.findById(id)).thenReturn(Optional.of(ticket));
 
         ticketService.deleteById(id);
 
@@ -82,9 +83,15 @@ class TicketServiceTest {
 
     @Test
     @DisplayName("deleteById должен пробросить исключение BadRequestException, если тикета нет")
-    void deleteById_ShouldNotExecute_WhenNotExists() {
-        when(ticketRepository.existsById(1L)).thenReturn(false);
+    void deleteById_ShouldThrowBadRequest_WhenTicketNotFound() {
+        Long id = 1L;
+        when(ticketRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThatException().isThrownBy(() -> ticketService.deleteById(1L)).isInstanceOf(BadRequestException.class);
+        assertThatException()
+                .isThrownBy(() -> ticketService.deleteById(id))
+                .isInstanceOf(BadRequestException.class)
+                .withMessageContaining("Ticket with id 1 not found.");
+
+        verify(ticketRepository, never()).deleteById(anyLong());
     }
 }

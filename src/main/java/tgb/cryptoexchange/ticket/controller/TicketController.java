@@ -37,6 +37,15 @@ public class TicketController extends ApiController {
                 .body(ApiResponse.success(tickets.getContent()));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<TicketDTO>> findById(@PathVariable Long id) {
+        return ticketService.findById(id)
+                .map(ticket -> new ResponseEntity<>(ApiResponse.success(
+                        TicketDTO.fromEntity(ticket)),
+                        HttpStatus.OK))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{id}/reply")
     public ResponseEntity<ApiResponse<TicketReplyDTO>> findTicketReplyByTicketId(@PathVariable Long id) {
         return ticketService.findById(id)
