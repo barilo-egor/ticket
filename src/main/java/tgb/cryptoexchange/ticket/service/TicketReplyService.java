@@ -32,6 +32,10 @@ public class TicketReplyService {
             log.warn("На сохранение поступил тикет с ID {}, которого не существует: {}",
                     ticketReplyRequest.getTicketId(), ticketReplyRequest);
             return;
+        } else if (maybeTicket.get().getReplyTicket() != null) {
+            log.warn("На сохранение поступил тикет {} с уже обработанным ответом: {}",
+                    ticketReplyRequest.getTicketId(), ticketReplyRequest);
+            return;
         }
         TicketReply ticketReply = TicketReply.builder()
                 .ticket(Ticket.builder().id(ticketReplyRequest.getTicketId()).build())

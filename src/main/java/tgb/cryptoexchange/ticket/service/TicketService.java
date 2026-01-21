@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import tgb.cryptoexchange.exception.BadRequestException;
+import tgb.cryptoexchange.exception.UnprocessableEntityException;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.dto.TicketRequest;
 import tgb.cryptoexchange.ticket.entity.File;
@@ -65,13 +66,17 @@ public class TicketService {
 
     public void deleteById(Long id) {
         log.info("Запрос на удаление тикета с ID: {}", id);
-        if (ticketRepository.existsById(id)) {
-            ticketRepository.deleteById(id);
-            log.info("Тикет с ID={} удален", id);
-        } else {
+        Optional<Ticket> ticket = ticketRepository.findById(id);
+        if (ticket.isEmpty()) {
             log.warn("Тикет для удаления с ID={} не существует.", id);
             throw new BadRequestException(String.format("Ticket with id %s not found.", id));
         }
+        if (ticket.get().getReplyTicket() != null) {
+            log.warn("Попытка удалить обработанный тикет с ID={}", id);
+            throw new UnprocessableEntityException("Ticket has already been processed");
+        }
+        ticketRepository.deleteById(id);
+        log.info("Тикет с ID={} удален", id);
     }
 
 }
