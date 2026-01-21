@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.apache.kafka.common.serialization.Deserializer;
+import tgb.cryptoexchange.ticket.dto.FileDTO;
 import tgb.cryptoexchange.ticket.entity.File;
 import tgb.cryptoexchange.ticket.exception.DeserializeEventException;
 
@@ -27,7 +28,7 @@ public class TicketReplyReceive {
     @JsonProperty(required = true)
     private Long authorId;
 
-    private List<File> files;
+    private List<FileDTO> files;
 
     public static class KafkaDeserializer implements Deserializer<TicketReplyReceive> {
 

@@ -3,25 +3,23 @@ package tgb.cryptoexchange.ticket.dto;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.jpa.domain.Specification;
 import tgb.cryptoexchange.ticket.entity.Ticket;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 public class TicketRequest {
 
-    private  String appId;
+    private String appId;
 
     private Long userId;
 
     private String category;
+
+    private Boolean hasReply;
 
     public List<Predicate> toPredicates(Root<Ticket> root, CriteriaBuilder cb) {
         List<Predicate> predicates = new ArrayList<>();
@@ -33,6 +31,13 @@ public class TicketRequest {
         }
         if (StringUtils.isNotBlank(category)) {
             predicates.add(cb.equal(root.get("category"), category));
+        }
+        if (hasReply != null) {
+            if (hasReply) {
+                predicates.add(cb.isNotNull(root.get("replyTicket")));
+            } else {
+                predicates.add(cb.isNull(root.get("replyTicket")));
+            }
         }
         return predicates;
     }

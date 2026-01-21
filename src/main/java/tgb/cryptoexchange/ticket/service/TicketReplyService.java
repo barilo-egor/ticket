@@ -3,16 +3,14 @@ package tgb.cryptoexchange.ticket.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.File;
+import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.TicketReply;
 import tgb.cryptoexchange.ticket.kafka.TicketReplyReceive;
 import tgb.cryptoexchange.ticket.repository.TickerReplyRepository;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 
 @Service
 @Slf4j
@@ -31,7 +29,8 @@ public class TicketReplyService {
         log.info("Запрос на сохранение ответа на тикет: {}", ticketReplyRequest.getTicketId());
         Optional<Ticket> maybeTicket = ticketService.findById(ticketReplyRequest.getTicketId());
         if (maybeTicket.isEmpty()) {
-            log.warn("На сохранение поступил тикет с ID {}, которого не существует: {}", ticketReplyRequest.getTicketId(), ticketReplyRequest);
+            log.warn("На сохранение поступил тикет с ID {}, которого не существует: {}",
+                    ticketReplyRequest.getTicketId(), ticketReplyRequest);
             return;
         }
         TicketReply ticketReply = TicketReply.builder()
@@ -40,7 +39,7 @@ public class TicketReplyService {
                 .authorId(ticketReplyRequest.getAuthorId())
                 .files(CollectionUtils.isEmpty(ticketReplyRequest.getFiles()) ? new ArrayList<>() :
                         ticketReplyRequest.getFiles().stream()
-                                .map(dto -> new File(dto.getFileId(), dto.getFormat()))
+                                .map(dto -> File.builder().fileId(dto.getFileId()).format(dto.getFormat()).build())
                                 .toList())
                 .build();
         tickerReplyRepository.save(ticketReply);

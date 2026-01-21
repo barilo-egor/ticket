@@ -9,15 +9,14 @@ import org.springframework.util.CollectionUtils;
 import tgb.cryptoexchange.exception.BadRequestException;
 import tgb.cryptoexchange.ticket.dto.TicketDTO;
 import tgb.cryptoexchange.ticket.dto.TicketRequest;
-import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.entity.File;
+import tgb.cryptoexchange.ticket.entity.Ticket;
 import tgb.cryptoexchange.ticket.kafka.TicketReceive;
 import tgb.cryptoexchange.ticket.repository.TickerRepository;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -39,7 +38,7 @@ public class TicketService {
                 .userId(ticketReceive.getUserId())
                 .files(CollectionUtils.isEmpty(ticketReceive.getFiles()) ? new ArrayList<>() :
                         ticketReceive.getFiles().stream()
-                                .map(dto -> new File(dto.getFileId(), dto.getFormat()))
+                                .map(dto -> File.builder().fileId(dto.getFileId()).format(dto.getFormat()).build())
                                 .toList())
                 .build();
         ticketRepository.save(ticket);
@@ -58,7 +57,6 @@ public class TicketService {
                 ticketPage.getNumberOfElements(), ticketPage.getNumber(), ticketPage.getTotalPages());
         return ticketPage.map(TicketDTO::fromEntity);
     }
-
 
     public Optional<Ticket> findById(Long id) {
         log.debug("Запрос на поиск тикета по ID: {}", id);
