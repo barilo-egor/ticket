@@ -35,10 +35,11 @@ public class Ticket {
     @Column(nullable = false)
     private String description;
 
-    @ElementCollection
-    @CollectionTable(
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
             name = "ticket_files",
-            joinColumns = @JoinColumn(name = "ticket_id")
+            joinColumns = @JoinColumn(name = "ticket_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id")
     )
     @Builder.Default
     private List<File> files = new ArrayList<>();

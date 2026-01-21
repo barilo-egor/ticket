@@ -31,10 +31,11 @@ public class TicketReply {
     @Column(nullable = false)
     private Long authorId;
 
-    @ElementCollection
-    @CollectionTable(
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
             name = "reply_files",
-            joinColumns = @JoinColumn(name = "reply_id")
+            joinColumns = @JoinColumn(name = "reply_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id")
     )
     @Builder.Default
     private List<File> files = new ArrayList<>();
